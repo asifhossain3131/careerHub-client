@@ -1,4 +1,5 @@
-import { Button, TextField } from "@mui/material";
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import "./Home.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Swal from "sweetalert2";
