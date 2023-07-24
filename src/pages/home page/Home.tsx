@@ -1,9 +1,9 @@
 import { Button, TextField } from "@mui/material";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
 import "./Home.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Swal from "sweetalert2";
+import { addToLocalStorage } from "../../utils/localStorage";
+import { useNavigate } from "react-router-dom";
 
 type Inputs = {
   name: string;
@@ -12,11 +12,14 @@ type Inputs = {
 };
 
 const Home = () => {
+    const navigate=useNavigate()
   const { register, handleSubmit, reset } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = (data) => {
    const {name,phone,email}=data
    if(name && phone && email){
+    addToLocalStorage(email)
     reset()
+   navigate('/application')
    }
    else{
     Swal.fire({
@@ -28,8 +31,7 @@ const Home = () => {
   };
   return (
     <>
-      <Header></Header>
-      <div className="min-h-[calc(100vh-120px)] bg-gray-200 flex flex-col lg:flex-row gap-4 items-center">
+      <div className="flex flex-col lg:flex-row gap-4 items-center">
         <img
           className="homeImg  min-h-screen lg:w-3/5"
           src="https://www.tierpoint.com/wp-content/uploads/2022/05/8-IT-Professional-Career-Development-Tips-in-a-Managed-Services-World_blog.jpg"
@@ -73,7 +75,6 @@ const Home = () => {
           </form>
         </div>
       </div>
-      <Footer></Footer>
     </>
   );
 };

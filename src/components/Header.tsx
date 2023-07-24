@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -8,6 +7,9 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
+import { Button } from '@mui/material';
+import { getUser, removeUser } from '../utils/localStorage';
+import { useNavigate } from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -52,6 +54,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Header = () => {
+  const navigate=useNavigate()
+  const user=getUser()
+  const hanldeLogout=()=>{
+   removeUser()
+   navigate('/')
+  }
     return (
         <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -73,6 +81,7 @@ const Header = () => {
           >
             CareerHub
           </Typography>
+         {user && <Button variant="text" className='text-black' onClick={hanldeLogout}>Logout</Button>}
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
