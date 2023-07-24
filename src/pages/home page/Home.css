@@ -1,0 +1,12 @@
+.homeImg {
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(75% 0%, 87% 52%, 75% 100%, 0% 100%, 0 51%, 0% 0%);
+}
+
+/* Media query for mobile devices */
+@media only screen and (max-width: 767px) {
+    .homeImg {
+        clip-path: none; 
+    }
+}
