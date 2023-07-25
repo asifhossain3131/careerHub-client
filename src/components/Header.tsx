@@ -81,7 +81,7 @@ const Header = () => {
           >
             CareerHub
           </Typography>
-         {user && <Button variant="text" className='text-black' onClick={hanldeLogout}>Logout</Button>}
+         {user && <Button variant="text" className='text-white' onClick={hanldeLogout}>Logout</Button>}
           <Search>
             <SearchIconWrapper>
               <SearchIcon />

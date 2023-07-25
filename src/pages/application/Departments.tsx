@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -24,15 +24,15 @@ const Departments = () => {
   const [expandedDepartment, setExpandedDepartment] = useState(-1);
   const [selectedDepartments, setSelectedDepartments] = useState(new Set());
 
-  const isAllSubDepartmentsSelected = (departmentIndex) => {
+  const isAllSubDepartmentsSelected = (departmentIndex:number) => {
     const subDepartments = departments[departmentIndex].sub_departments;
     return subDepartments.every((subDepartment) => selectedDepartments.has(subDepartment));
   };
 
   useEffect(() => {
-    // Check if all sub-departments of a department are selected and update the parent checkbox
     departments.forEach((dept, index) => {
-      const parentCheckbox = document.getElementById(`parent-checkbox-${index}`);
+      // const parentCheckbox = document.getElementById(`parent-checkbox-${index}`);
+      const parentCheckbox = document.querySelector<HTMLInputElement>(`#parent-checkbox-${index}`);
       if (parentCheckbox) {
         parentCheckbox.checked = isAllSubDepartmentsSelected(index);
         parentCheckbox.indeterminate =
@@ -41,34 +41,34 @@ const Departments = () => {
     });
   }, [selectedDepartments, departments]);
 
-  const handleExpand = (index) => {
+  const handleExpand = (index:number) => {
     setExpandedDepartment((prevExpanded) => (prevExpanded === index ? -1 : index));
   };
 
-  const handleParentCheckboxClick = (event, index) => {
-    // Prevent the event from propagating to the parent ListItemButton
+  const handleParentCheckboxClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, index:number) => {
+    // Preventing event propagation
     event.stopPropagation();
 
     const subDepartments = departments[index].sub_departments;
     setSelectedDepartments((prevSelected) => {
       const newSelected = new Set(prevSelected);
       if (isAllSubDepartmentsSelected(index)) {
-        // Unselect all sub-departments if all are selected
+        // Unselecting all subdepartment based on parent checkbox
         subDepartments.forEach((subDepartment) => newSelected.delete(subDepartment));
       } else {
-        // Select all sub-departments if any or none are selected
+        // Selecting all subdepartments
         subDepartments.forEach((subDepartment) => newSelected.add(subDepartment));
       }
       return newSelected;
     });
 
-    // Manually expand the department when the parent checkbox is clicked
+    // expanding while clicking the parent box
     if (!expandedDepartment || expandedDepartment !== index) {
       setExpandedDepartment(index);
     }
   };
 
-  const handleSubDepartmentClick = (subDepartment) => {
+  const handleSubDepartmentClick = (subDepartment:string) => {
     setSelectedDepartments((prevSelected) => {
       const newSelected = new Set(prevSelected);
       if (newSelected.has(subDepartment)) {
@@ -83,8 +83,9 @@ const Departments = () => {
   return (
     <>
       <h1 className="text-gray-600 text-2xl text-center p-4">Find your departments</h1>
-      <div className="w-1/2 mx-auto">
+      <div >
         <List
+        className="w-1/2 mx-auto"
           sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
           component="nav"
           aria-labelledby="nested-list-subheader"

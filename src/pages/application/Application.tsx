@@ -4,7 +4,7 @@ import Departments from "./Departments";
 
 const Application = () => {
     return (
-        <div>
+        <div className="space-y-4 py-4">
             <ApplicationTable></ApplicationTable>
             <Departments></Departments>
         </div>

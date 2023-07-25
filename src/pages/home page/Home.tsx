@@ -18,7 +18,7 @@ const Home = () => {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
    const {name,phone,email}=data
    if(name && phone && email){
-    addToLocalStorage(email)
+    addToLocalStorage(email,name,phone)
     reset()
    navigate('/application')
    }
