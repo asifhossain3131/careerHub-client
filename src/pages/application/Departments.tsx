@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -12,40 +12,63 @@ import RemoveIcon from '@mui/icons-material/Remove';
 const Departments = () => {
   const departments = [
     {
-      "department": "customer_service",
-      "sub_departments": [
-        "support",
-        "customer_success"
-      ]
+      department: 'customer_service',
+      sub_departments: ['support', 'customer_success'],
     },
     {
-      "department": "design",
-      "sub_departments": [
-        "graphic_design",
-        "product_design",
-        "web_design"
-      ]
-    }
+      department: 'design',
+      sub_departments: ['graphic_design', 'product_design', 'web_design'],
+    },
   ];
 
-  const [expandedDepartment, setExpandedDepartment] = React.useState(0);
-  const [selectedDepartments, setSelectedDepartments] = React.useState(new Set());
+  const [expandedDepartment, setExpandedDepartment] = useState(-1);
+  const [selectedDepartments, setSelectedDepartments] = useState(new Set());
 
-  const handleClick = (index:number) => {
-    if (expandedDepartment === index) {
-      // If the clicked department is already expanded, collapse it and clear the selected departments
-      setExpandedDepartment(-1);
-      setSelectedDepartments(new Set());
-    } else {
-      // If the clicked department is not expanded, expand it and select all of its sub-departments
+  const isAllSubDepartmentsSelected = (departmentIndex) => {
+    const subDepartments = departments[departmentIndex].sub_departments;
+    return subDepartments.every((subDepartment) => selectedDepartments.has(subDepartment));
+  };
+
+  useEffect(() => {
+    // Check if all sub-departments of a department are selected and update the parent checkbox
+    departments.forEach((dept, index) => {
+      const parentCheckbox = document.getElementById(`parent-checkbox-${index}`);
+      if (parentCheckbox) {
+        parentCheckbox.checked = isAllSubDepartmentsSelected(index);
+        parentCheckbox.indeterminate =
+          selectedDepartments.size > 0 && !isAllSubDepartmentsSelected(index) && selectedDepartments.has(dept.department);
+      }
+    });
+  }, [selectedDepartments, departments]);
+
+  const handleExpand = (index) => {
+    setExpandedDepartment((prevExpanded) => (prevExpanded === index ? -1 : index));
+  };
+
+  const handleParentCheckboxClick = (event, index) => {
+    // Prevent the event from propagating to the parent ListItemButton
+    event.stopPropagation();
+
+    const subDepartments = departments[index].sub_departments;
+    setSelectedDepartments((prevSelected) => {
+      const newSelected = new Set(prevSelected);
+      if (isAllSubDepartmentsSelected(index)) {
+        // Unselect all sub-departments if all are selected
+        subDepartments.forEach((subDepartment) => newSelected.delete(subDepartment));
+      } else {
+        // Select all sub-departments if any or none are selected
+        subDepartments.forEach((subDepartment) => newSelected.add(subDepartment));
+      }
+      return newSelected;
+    });
+
+    // Manually expand the department when the parent checkbox is clicked
+    if (!expandedDepartment || expandedDepartment !== index) {
       setExpandedDepartment(index);
-      const subDepartments = departments[index].sub_departments;
-      setSelectedDepartments(new Set(subDepartments));
     }
   };
 
-  const handleSubDepartmentClick = (subDepartment:any) => {
-    // Toggle the selection of a sub-department
+  const handleSubDepartmentClick = (subDepartment) => {
     setSelectedDepartments((prevSelected) => {
       const newSelected = new Set(prevSelected);
       if (newSelected.has(subDepartment)) {
@@ -60,7 +83,7 @@ const Departments = () => {
   return (
     <>
       <h1 className="text-gray-600 text-2xl text-center p-4">Find your departments</h1>
-      <div className='w-1/2 mx-auto'>
+      <div className="w-1/2 mx-auto">
         <List
           sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
           component="nav"
@@ -75,10 +98,22 @@ const Departments = () => {
             <div key={department.department}>
               <ListItemButton>
                 <ListItemIcon>
-                  <Checkbox checked={expandedDepartment === index && selectedDepartments.size === department.sub_departments.length} />
+                  <Checkbox
+                    id={`parent-checkbox-${index}`}
+                    checked={isAllSubDepartmentsSelected(index)}
+                    onClick={(event) => handleParentCheckboxClick(event, index)}
+                  />
                 </ListItemIcon>
                 <ListItemText primary={department.department} />
-                {expandedDepartment === index ? <button onClick={() => handleClick(index)}><RemoveIcon /></button> : <button onClick={() => handleClick(index)}><AddIcon /></button>}
+                {expandedDepartment === index ? (
+                  <button onClick={() => handleExpand(index)}>
+                    <RemoveIcon />
+                  </button>
+                ) : (
+                  <button onClick={() => handleExpand(index)}>
+                    <AddIcon />
+                  </button>
+                )}
               </ListItemButton>
               <Collapse in={expandedDepartment === index} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
